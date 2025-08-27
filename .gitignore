@@ -1,0 +1,28 @@
+# Python venv / caches
+.venv/
+__pycache__/
+*.py[cod]
+*.ipynb_checkpoints/
+
+# Local runtime artifacts
+Workspace/
+Done/
+Fail/
+Inbox/
+/tmp/
+*.log
+
+# Models, dicts, checkpoints, audio/video samples (keep outside repo)
+*.wav
+*.mp3
+*.m4a
+*.mp4
+*.mov
+
+# Sudachi large dicts (installed via pip, not versioned)
+**/sudachidict*/resources/system.dic
+
+# OS / editor junk
+.DS_Store
+.vscode/
+.idea/
