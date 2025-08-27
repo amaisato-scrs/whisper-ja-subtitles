@@ -1,49 +1,54 @@
-# /Users/sato/Scripts/Whisper/tools/srt_qc_ja.py
-# 禁則境界（ございま|す, 9|月, 10|日 等）がブロック間に残っていないかをレポート。
-import re, sys
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import re, sys, srt, math, argparse
+from pathlib import Path
 
-def parse(path):
-    with open(path, "r", encoding="utf-8") as f:
-        blocks=[]
-        idx=None; span=None; txt=[]
-        for line in f:
-            line=line.rstrip("\n")
-            if line.isdigit():
-                idx=int(line); span=None; txt=[]
-            elif " --> " in line:
-                span=line
-            elif line=="":
-                if idx is not None:
-                    blocks.append(("".join(txt), span))
-                idx=None; span=None; txt=[]
-            else:
-                txt.append(line)
-        if idx is not None:
-            blocks.append(("".join(txt), span))
-    return blocks
+EOS = "。！？!?"
+TAILS = ("です","ます","でした","ません","なります","になります")
 
-pairs = set(["ます","です","でした","なります","ください","いただき","翌日","第2","2期","9月","10日","23区","納付","納期"])
-units = "年月日区期"
+def ends_ok(t: str) -> bool:
+    t = t.rstrip()
+    if not t: return True
+    if t[-1] in EOS: return True
+    return any(t.endswith(x) for x in TAILS)
 
-def bad_pair(a,b):
-    if a+b in pairs: return True
-    if a.isdigit() and b in units: return True
-    if a=="第" and b.isdigit(): return True
-    if a=="翌" and b=="日": return True
-    return False
+def cps(chars: int, dur_s: float) -> float:
+    return chars / max(dur_s, 1e-6)
 
-def main(p):
-    blocks = parse(p)
-    bad=0
-    for i in range(len(blocks)-1):
-        ta,_ = blocks[i]
-        tb,_ = blocks[i+1]
-        if not ta or not tb: continue
-        a = ta[-1]; b = tb[0]
-        if bad_pair(a,b):
-            bad+=1
-            print(f"[BAD] …{a} | {b}…  at boundary #{i+1}/#{i+2}")
-    print(f"Checked {len(blocks)} blocks. Forbidden boundary count = {bad}")
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("srt")
+    ap.add_argument("--max-cps", type=float, default=17.0)
+    args = ap.parse_args()
+
+    p = Path(args.srt)
+    subs = list(srt.parse(p.read_text(encoding='utf-8')))
+
+    bad_eos, midword, over_cps = [], [], []
+    for s in subs:
+        t = s.content.strip()
+        if not ends_ok(t):
+            bad_eos.append((s.index, t))
+        if re.search(r'[一-龥ぁ-んァ-ン][\n][一-龥ぁ-んァ-ン]', t):
+            midword.append((s.index, t))
+        dur = (s.end - s.start).total_seconds()
+        c = len(t.replace("\n",""))
+        if cps(c, dur) > args.max_cps:
+            over_cps.append((s.index, c, dur))
+
+    print(f"[QC] 未終端: {len(bad_eos)} / 語中改行疑い: {len(midword)} / CPS超過: {len(over_cps)} (> {args.max_cps})")
+    if bad_eos:
+        print("\n== 未終端例 ==")
+        for i, t in bad_eos[:15]:
+            print(f"#{i}: {t.replace('\\n',' / ')}")
+    if midword:
+        print("\n== 語中改行例 ==")
+        for i, t in midword[:15]:
+            print(f"#{i}: {t.replace('\\n',' / ')}")
+    if over_cps:
+        print("\n== CPS超過例 ==")
+        for i, c, d in over_cps[:15]:
+            print(f"#{i}: chars={c} dur={d:.2f}s -> cps={c/d:.2f}")
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main()
