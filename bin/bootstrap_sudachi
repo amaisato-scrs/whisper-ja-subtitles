@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+source "$ROOT/env.sh"
+
+"$PYTHON" -m pip install -U "sudachipy==0.6.8" "sudachidict-full==20230110"
+
+mkdir -p "$ROOT/config"
+"$PYTHON" - <<'PY'
+import json, os, importlib
+pkg = importlib.import_module("sudachidict_full")
+base = os.path.dirname(pkg.__file__)
+cfg = {"systemDict": os.path.join(base, "resources", "system.dic")}
+os.makedirs("config", exist_ok=True)
+with open("config/sudachi.json","w") as f:
+    json.dump(cfg, f, ensure_ascii=False, indent=2)
+print("wrote: config/sudachi.json")
+PY
+
+echo "Sudachi (full) ready."

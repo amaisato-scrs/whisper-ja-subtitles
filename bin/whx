@@ -1,0 +1,50 @@
+cat > bin/whx <<'SH'
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+source "$ROOT/env.sh"
+
+usage(){ echo "Usage: $(basename "$0") [fresh|fix] <path> [--slug SLUG] [--no-merge]"; exit 1; }
+
+cmd="${1:-fresh}"; shift || true
+src="${1:-}"; [[ -n "$src" ]] || usage; shift || true
+
+slug="$(basename "${src%.*}")_$(date +%Y%m%d-%H%M%S)"
+merge_opt=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --slug) shift; slug="$1";;
+    --no-merge) merge_opt="--no-merge";;
+    *) ;;
+  esac; shift || true
+done
+
+run="$WORKSPACE_ROOT/Runs/$slug"; mkdir -p "$run"/{asr,srt_ja,final}
+
+if [[ "$cmd" == "fresh" ]]; then
+  "$PYTHON" -m whisperx "$src" --model large-v2 --language ja --device cpu --compute_type int8 \
+    --output_dir "$run/asr" --output_format srt
+  in_srt=$(echo "$run"/asr/*.srt)
+elif [[ "$cmd" == "fix" ]]; then
+  in_srt="$src"
+else
+  usage
+fi
+
+"$PYTHON" tools/srt_lint_polish.py "$in_srt" \
+  -o "$run/srt_ja/${slug}_clean.srt" \
+  --lead-in 0.12 --lead-out 0.18 --hysteresis 0.06 \
+  --min-dur 1.0 --max-cps 17 --max-chars 42
+
+"$PYTHON" tools/srt_refine_ja.py "$run/srt_ja/${slug}_clean.srt" \
+  -o "$run/srt_ja/${slug}_refined.srt" $merge_opt
+
+"$PYTHON" tools/srt_lint_polish.py "$run/srt_ja/${slug}_refined.srt" \
+  -o "$run/final/${slug}_ja.final.srt" \
+  --lead-in 0.15 --lead-out 0.22 --hysteresis 0.06 \
+  --min-dur 1.0 --max-cps 17 --max-chars 42
+
+"$PYTHON" tools/srt_check_ja.py "$run/final/${slug}_ja.final.srt"
+echo "DONE: $run/final/${slug}_ja.final.srt"
+SH
+chmod +x bin/whx

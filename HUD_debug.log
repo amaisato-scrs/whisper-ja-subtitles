@@ -1,0 +1,6 @@
+run start
+appPath=/Users/sato/Scripts/Whisper/Apps/Whisper HUD.app/
+appRoot=/Users/sato/Scripts/Whisper/Apps/Whisper HUD.app/
+homeDir=/Users/sato/Scripts/Whisper
+statusPath=/Users/sato/Scripts/Whisper/_status.txt
+window shown
