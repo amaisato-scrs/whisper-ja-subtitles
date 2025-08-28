@@ -14,3 +14,7 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# bundle outputs
+/bundle/
+bundle_*.txt
