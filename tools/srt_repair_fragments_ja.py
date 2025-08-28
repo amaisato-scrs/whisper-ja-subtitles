@@ -5,7 +5,7 @@ import re, sys, argparse
 from dataclasses import dataclass
 
 TIMECODE = re.compile(r"(\d\d):(\d\d):(\d\d),(\d\d\d)\s*-->\s*(\d\d):(\d\d):(\d\d),(\d\d\d)")
-TAILERS = tuple("すねよがとでもにはをがの".split())
+TAILERS = tuple("すねよがとでもにはをの")
 SENT_PUNCTS = "。！？…"
 
 def t2s(h, m, s, ms): return int(h)*3600 + int(m)*60 + int(s) + int(ms)/1000.0

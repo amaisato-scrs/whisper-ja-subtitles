@@ -1,0 +1,21 @@
+-    *) usage; exit 1 ;;
+-  endsw esac
++    *) usage; exit 1 ;;
++  esac
+ done
+
+@@
+-"$PYTHON" "${ROOT_DIR}/tools/srt_repair_fragments_ja.py" \
+-  -i "${RUN_DIR}/srt_ja/${SLUG}_ja-JP_seg.srt" \
+-  -o "${RUN_DIR}/srt_ja/${SLUG}_ja-JP_seg.srt"
++"$PYTHON" "${ROOT_DIR}/tools/srt_repair_fragments_ja.py" \
++  "${RUN_DIR}/srt_ja/${SLUG}_ja-JP_seg.srt" \
++  -o "${RUN_DIR}/srt_ja/${SLUG}_ja-JP_seg.srt"
+
+@@
+-"$PYTHON" "${ROOT_DIR}/tools/srt_lint_polish.py" \
+-  --in  "${RUN_DIR}/srt_ja/${SLUG}_ja-JP_seg.srt" \
+-  --out "${RUN_DIR}/srt_ja/${SLUG}_ja_clean.srt"
++"$PYTHON" "${ROOT_DIR}/tools/srt_lint_polish.py" \
++  "${RUN_DIR}/srt_ja/${SLUG}_ja-JP_seg.srt" \
++  -o "${RUN_DIR}/srt_ja/${SLUG}_ja_clean.srt"

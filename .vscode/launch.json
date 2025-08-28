@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "refine_ja debug",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/tools/srt_refine_ja.py",
+      "args": [
+        "Workspace/Runs/latest/srt_ja/input_clean.srt",
+        "-o", "Workspace/Runs/latest/srt_ja/input_refined.srt"
+      ],
+      "env": {
+        "SUDACHI_CONFIG_PATH": "${workspaceFolder}/config/sudachi.json"
+      },
+      "console": "integratedTerminal"
+    }
+  ]
+}

@@ -1,41 +1,16 @@
-# .gitkeep を配備
-touch Workspace/.gitkeep Workspace/Inbox/.gitkeep Workspace/Runs/.gitkeep Workspace/Done/.gitkeep Workspace/Fail/.gitkeep
+# build artifacts & runtime
+/Apps/
+/Workspace/
+/_status.txt
+/HUD_debug.log
 
-# .gitignore を（追記で）強化
-cat >> .gitignore <<'EOF'
-# --- macOS & Python ---
-.DS_Store
+# env / venv
+/.venv/
+/config/sudachi.json
+
+# python caches
 __pycache__/
 *.pyc
 
-# --- 仮想環境は追跡しない ---
-.venv/
-
-# --- Workspace の中身は無視（ディレクトリだけ残す） ---
-Workspace/*
-!Workspace/.gitkeep
-Workspace/Inbox/*
-!Workspace/Inbox/.gitkeep
-Workspace/Runs/*
-!Workspace/Runs/.gitkeep
-Workspace/Done/*
-!Workspace/Done/.gitkeep
-Workspace/Fail/*
-!Workspace/Fail/.gitkeep
-
-# --- 音声/動画など大容量（誤コミット防止） ---
-*.wav
-*.mp3
-*.m4a
-*.flac
-*.aac
-*.mp4
-*.mov
-EOF
-
-git add .gitignore Workspace/.gitkeep Workspace/Inbox/.gitkeep Workspace/Runs/.gitkeep Workspace/Done/.gitkeep Workspace/Fail/.gitkeep
-git commit -m "chore: keep Workspace skeleton tracked; ignore heavy outputs"
-git push
-
-config/sudachi.json
-config/sudachi.json
+# macOS
+.DS_Store

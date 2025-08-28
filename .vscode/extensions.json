@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "GitHub.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "charliermarsh.ruff",
+    "ms-python.black-formatter",
+    "EditorConfig.EditorConfig",
+    "usernamehw.errorlens",
+    "yzhang.markdown-all-in-one",
+    "timonwong.shellcheck",
+    "MS-CEINTL.vscode-language-pack-ja"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "bootstrap: venv & deps",
+      "type": "shell",
+      "command": "python3 -m venv .venv && .venv/bin/pip install -U pip && .venv/bin/pip install -r requirements.txt",
+      "problemMatcher": []
+    },
+    {
+      "label": "run: from audio",
+      "type": "shell",
+      "command": "bin/ja_from_audio.sh '${input:audioPath}'",
+      "problemMatcher": [],
+      "dependsOn": "bootstrap: venv & deps"
+    },
+    {
+      "label": "qc: last result",
+      "type": "shell",
+      "command": "ls -1t Workspace/Runs/*/final/*_ja.final.srt | head -n1 | xargs ${workspaceFolder}/.venv/bin/python tools/srt_qc.py",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "audioPath",
+      "type": "promptString",
+      "description": "音声ファイルへのフルパス（.wav/.m4a など）"
+    }
+  ]
+}

@@ -1,20 +1,20 @@
-cat > bin/whx <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 source "$ROOT/env.sh"
 
-usage(){ echo "Usage: $(basename "$0") [fresh|fix] <path> [--slug SLUG] [--no-merge]"; exit 1; }
+usage(){ echo "Usage: $(basename "$0") [fresh|fix] <path> [--slug SLUG] [--no-merge|--merge]"; exit 1; }
 
 cmd="${1:-fresh}"; shift || true
 src="${1:-}"; [[ -n "$src" ]] || usage; shift || true
 
 slug="$(basename "${src%.*}")_$(date +%Y%m%d-%H%M%S)"
-merge_opt=""
+merge_opt="--no-merge"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --slug) shift; slug="$1";;
     --no-merge) merge_opt="--no-merge";;
+    --merge) merge_opt="";;   # 明示で結合ON
     *) ;;
   esac; shift || true
 done
@@ -44,7 +44,5 @@ fi
   --lead-in 0.15 --lead-out 0.22 --hysteresis 0.06 \
   --min-dur 1.0 --max-cps 17 --max-chars 42
 
-"$PYTHON" tools/srt_check_ja.py "$run/final/${slug}_ja.final.srt"
+"$PYTHON" tools/srt_qc.py "$run/final/${slug}_ja.final.srt"
 echo "DONE: $run/final/${slug}_ja.final.srt"
-SH
-chmod +x bin/whx

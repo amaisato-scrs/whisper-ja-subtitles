@@ -1,0 +1,31 @@
+{
+  // --- Python / Lint & Format ---
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.analysis.typeCheckingMode": "basic",
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.formatting.provider": "none",
+
+  // Ruff: 保存時に修正＋import 並べ替え（Ruff を優先）
+  "ruff.enable": true,
+  "ruff.lint.organizeImports": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  // --- JSON/JSONC は内蔵フォーマッタ ---
+  "[json]":  { "editor.defaultFormatter": "vscode.json-language-features" },
+  "[jsonc]": { "editor.defaultFormatter": "vscode.json-language-features" },
+
+  // --- ターミナル環境（このプロジェクト内のターミナルだけに効く）---
+  "terminal.integrated.env.osx": {
+    "SUDACHI_CONFIG_PATH": "${workspaceFolder}/config/sudachi.json",
+    "WHISPER_HOME": "${workspaceFolder}",
+    "WORKSPACE_ROOT": "${workspaceFolder}/Workspace",
+    "PYTHON": "${workspaceFolder}/.venv/bin/python",
+    "PATH": "${workspaceFolder}/bin:${workspaceFolder}/.venv/bin:${env:PATH}"
+  }
+}

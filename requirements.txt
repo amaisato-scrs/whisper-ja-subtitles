@@ -1,0 +1,13 @@
+torch==2.8.0
+torchaudio==2.8.0
+faster-whisper==1.2.0
+ctranslate2==4.4.0
+whisperx==3.4.2
+numpy==2.2.6
+soundfile>=0.12
+srt==3.5.3
+regex==2024.11.6
+tqdm
+pandas
+sudachipy==0.6.8
+sudachidict-full==20230110
